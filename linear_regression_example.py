@@ -1,5 +1,6 @@
 import datetime
 import matplotlib.pyplot as pl
+import numpy as np
 
 
 def load_data(path):
@@ -38,6 +39,15 @@ def calculate_coefficients_using_loops(x, y):
     return n, s_x, s_y, s_xx, s_xy, s_yy, a, b
 
 
+def calculate_coefficients_using_matrixes_and_numpy(x, y):
+    #  A = (XTX)-1XTy
+    X = np.column_stack((np.ones(len(x)), x))
+    XT = X.transpose()
+    XTX_1 = np.linalg.inv(np.dot(XT, X))
+    XTy = np.dot(XT, y)
+    A = np.dot(XTX_1, XTy)
+    return A
+
 def main():
     print('First you have to load the data to your program.')
     x, y = load_data('data/linear_regression_data.txt')
@@ -65,7 +75,11 @@ def main():
     pl.plot(x, y, 'rs', x, estimated_y)
     pl.show()
 
-
+    start = datetime.datetime.now()
+    A = calculate_coefficients_using_matrixes_and_numpy(x, y)
+    print('The calculation has been done in: ', datetime.datetime.now() - start)
+    print('The calculated coefficients are:')
+    print('A: ', A)
 
 
 if __name__ == '__main__':
